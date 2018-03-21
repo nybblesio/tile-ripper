@@ -126,7 +126,7 @@ namespace ConvertMidwayTiles {
         }
 
         public static void RipTiles() {
-            const int SourceTilesWidth = 74;
+            const int SourceTilesWidth = 75;
             const int SourceTilesHeight = 14;
             const int TileWidth = 16;
             const int TileHeight = 16;
@@ -190,17 +190,17 @@ namespace ConvertMidwayTiles {
         }
         
         public static void Main(string[] args) {
-            //RipTiles();
+            RipTiles();
             
-            UInt32 gpfsel1 = unchecked((UInt32) ~(7 << 12));
-            gpfsel1 |= 2 << 12;
-            Console.WriteLine("{0:x8}", gpfsel1);            
-            
-            UInt32 gpfsel2 = unchecked((UInt32) ~(7 << 15));
-            gpfsel2 |= 2 << 15;            
-            Console.WriteLine("{0:x8}", gpfsel2);            
-            
-            Console.WriteLine("{0:x8}", gpfsel1 & gpfsel2);            
+//            UInt32 gpfsel1 = unchecked((UInt32) ~(7 << 12));
+//            gpfsel1 |= 2 << 12;
+//            Console.WriteLine("{0:x8}", gpfsel1);            
+//            
+//            UInt32 gpfsel2 = unchecked((UInt32) ~(7 << 15));
+//            gpfsel2 |= 2 << 15;            
+//            Console.WriteLine("{0:x8}", gpfsel2);            
+//            
+//            Console.WriteLine("{0:x8}", gpfsel1 & gpfsel2);            
         }
         
     }
