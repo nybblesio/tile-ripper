@@ -25,23 +25,50 @@ namespace ConvertMidwayTiles {
     }
 
     internal static class Program {
-        private static readonly Palette PaletteOne = new Palette {
+        private static readonly Palette PaletteZero = new Palette {
             Entries = {
-                new PaletteEntry(0x24, 0x92, 0xff, 0x00),
+                new PaletteEntry(0x24, 0x92, 0xff, 0xff),
                 new PaletteEntry(0xff, 0x00, 0x00, 0xff),
                 new PaletteEntry(0xb6, 0x00, 0x00, 0xff),
                 new PaletteEntry(0xff, 0x00, 0x49, 0xff),
+                
                 new PaletteEntry(0xdb, 0x92, 0x24, 0xff),
                 new PaletteEntry(0x00, 0x00, 0x6d, 0xff),
                 new PaletteEntry(0x6d, 0x6d, 0x49, 0xff),
                 new PaletteEntry(0x49, 0x49, 0x24, 0xff),
+                
                 new PaletteEntry(0x00, 0x00, 0x6d, 0xff),
                 new PaletteEntry(0x00, 0x00, 0x00, 0xff),
                 new PaletteEntry(0xdb, 0x6d, 0x24, 0xff),
                 new PaletteEntry(0x6d, 0x24, 0x00, 0xff),
+                
                 new PaletteEntry(0x92, 0x49, 0x00, 0xff),
                 new PaletteEntry(0x00, 0x49, 0x00, 0xff),
                 new PaletteEntry(0x00, 0x6d, 0x00, 0xff),
+                new PaletteEntry(0xff, 0xff, 0xff, 0xff)
+            }
+        };
+
+        private static readonly Palette PaletteOne = new Palette {
+            Entries = {
+                new PaletteEntry(0x6d, 0x49, 0x00, 0xff),
+                new PaletteEntry(0x92, 0x24, 0x00, 0xff),
+                new PaletteEntry(0xdb, 0x92, 0x00, 0xff),
+                new PaletteEntry(0x49, 0x24, 0x00, 0xff),
+                
+                new PaletteEntry(0xb6, 0x6d, 0x00, 0xff),
+                new PaletteEntry(0x6d, 0x24, 0x00, 0xff),
+                new PaletteEntry(0x00, 0x6d, 0x00, 0xff),
+                new PaletteEntry(0x00, 0x24, 0xb6, 0xff),
+                
+                new PaletteEntry(0xff, 0xff, 0xff, 0xff),
+                new PaletteEntry(0x00, 0x00, 0x00, 0xff),
+                new PaletteEntry(0x24, 0x92, 0xff, 0xff),
+                new PaletteEntry(0xff, 0x00, 0x00, 0xff),
+                
+                new PaletteEntry(0x6d, 0x6d, 0x6d, 0xff),
+                new PaletteEntry(0x49, 0x49, 0x49, 0xff),
+                new PaletteEntry(0x00, 0x00, 0x6d, 0xff),
                 new PaletteEntry(0xff, 0xff, 0xff, 0xff)
             }
         };
@@ -50,10 +77,9 @@ namespace ConvertMidwayTiles {
             for (var i = 0; i < PaletteOne.Entries.Count; i++) {
                 var entry = PaletteOne.Entries[i];
 
-                if (entry.Alpha == color.A
-                    && entry.Red == color.R
-                    && entry.Green == color.G
-                    && entry.Blue == color.B) {
+                if (entry.Red == color.R
+                &&  entry.Green == color.G
+                &&  entry.Blue == color.B) {
                     return (byte) i;
                 }
             }
@@ -80,7 +106,8 @@ namespace ConvertMidwayTiles {
                     var spriteBytes = new byte[SpriteWidth * SpriteHeight];
                     for (var y = 0; y < SpriteHeight; y++) {
                         for (var x = 0; x < SpriteWidth; x++) {
-                            var paletteIndex = FindPaletteIndex(tiles.GetPixel(cx + x, cy + y));
+                            var color = tiles.GetPixel(cx + x, cy + y);
+                            var paletteIndex = FindPaletteIndex(color);       
                             spriteBytes[index++] = paletteIndex;
                             allSpriteBytes.Add(paletteIndex);
                         }
@@ -90,7 +117,7 @@ namespace ConvertMidwayTiles {
 
                     index = 0;
                     var palette = bitmap.Palette;
-                    foreach (var entry in PaletteOne.Entries)
+                    foreach (var entry in PaletteZero.Entries)
                         palette.Entries[index++] = Color.FromArgb(
                             entry.Alpha,
                             entry.Red,
@@ -131,10 +158,10 @@ namespace ConvertMidwayTiles {
             const int TileWidth = 16;
             const int TileHeight = 16;
 
-            var tiles = new Bitmap("/Users/jeff/Desktop/timber-tiles.png");
+            var tiles = new Bitmap("/Users/jeff/Desktop/timber-tiles-pal1.png");
             var allTileBytes = new List<byte>();
 
-            var cy = 1;
+            var cy = 0;
             var cx = 0;
             var tile = 0;
 
@@ -144,7 +171,8 @@ namespace ConvertMidwayTiles {
                     var tileBytes = new byte[TileWidth * TileHeight];
                     for (var y = 0; y < TileHeight; y++) {
                         for (var x = 0; x < TileWidth; x++) {
-                            var paletteIndex = FindPaletteIndex(tiles.GetPixel(cx + x, cy + y));
+                            var color = tiles.GetPixel(cx + x, cy + y);
+                            var paletteIndex = FindPaletteIndex(color);
                             tileBytes[index++] = paletteIndex;
                             allTileBytes.Add(paletteIndex);
                         }
@@ -186,9 +214,9 @@ namespace ConvertMidwayTiles {
                 cy += TileHeight + 1;
             }
 
-            File.WriteAllBytes("/Users/jeff/temp/timbg.bin", allTileBytes.ToArray());            
+            File.WriteAllBytes("/Users/jeff/temp/timbg.bin", allTileBytes.ToArray());
         }
-        
+
         public static void Main(string[] args) {
             RipTiles();
             
